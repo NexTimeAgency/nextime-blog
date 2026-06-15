@@ -1,0 +1,31 @@
+name: Deploy blog a hosting
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'blog/**'
+
+jobs:
+  deploy:
+    name: FTP Deploy → public_html/blog/
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server:   ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir:  ./blog/
+          server-dir: ${{ secrets.FTP_PATH }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+          log-level: minimal
